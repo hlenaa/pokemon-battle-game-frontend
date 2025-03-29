@@ -22,12 +22,6 @@ const PokeCard = ({
   const isMyRosterPage = location.pathname === "/my-roster"; // Check if the current route is the my-roster page
   const isBattlePage = location.pathname === "/battle"; // Check if the current route is the battle page
 
-  useEffect(() => {
-    if (typeof setRoster === "function") {
-      localStorage.setItem("roster", JSON.stringify(roster));
-    }
-  }, [roster]);
-
   const removePokemon = (pokemonId) => {
     const updatedRoster = roster.filter((pokemon) => pokemon.id !== pokemonId);
     setRoster(updatedRoster);
