@@ -104,16 +104,25 @@ function Battle() {
     let winner;
     if (myPower > enemyPower) {
       winner = myPokemon.name;
+      const xp = enemyPokemon.base_experience || 50;
+      setBattleResult(
+        `Your Pokémon ${winner.toUpperCase()} wins the battle! You won ${xp} XP.`
+      );
+      setAwaitingUsername(true);
     } else if (enemyPower > myPower) {
       winner = enemyPokemon.name;
+      setBattleResult(`${winner.toUpperCase()} wins the battle!`);
     } else {
       winner = Math.random() < 0.5 ? myPokemon.name : enemyPokemon.name;
-    }
-
-    setBattleResult(`${winner.toUpperCase()} wins the battle!`);
-
-    if (winner === myPokemon.name) {
-      setAwaitingUsername(true); // show input field
+      if (winner === myPokemon.name) {
+        const xp = enemyPokemon.base_experience || 50;
+        setBattleResult(
+          `Your Pokémon ${winner.toUpperCase()} wins the battle! You won ${xp} XP.`
+        );
+        setAwaitingUsername(true);
+      } else {
+        setBattleResult(`${winner.toUpperCase()} wins the battle!`);
+      }
     }
   };
 
