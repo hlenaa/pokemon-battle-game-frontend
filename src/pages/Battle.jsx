@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import PokeCard from "../components/PokeCard";
+import { Zap } from "lucide-react";
 
 function Battle() {
   const testRoster = [
@@ -146,85 +148,58 @@ function Battle() {
 
   return (
     <>
-      <div className="container">
-        <h1>Pokémon Battle!</h1>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-center mb-10">
+          Pokémon Battle!
+        </h1>
 
-        <div className="battle">
-          {/* User's Pokemon */}
-          <div className="pokemon">
-            <h2>{myPokemon.name.toUpperCase()}</h2>
-            <img src={myPokemon.sprites.front_default} alt={myPokemon.name} />
-            <div className="types">
-              <strong>Type{myPokemon.types.length > 1 ? "s" : ""}:</strong>{" "}
-              {myPokemon.types.map((t) => (
-                <span
-                  key={t.type.name}
-                  className={`type-badge type-${t.type.name}`}
+        <div className="flex flex-col items-center lg:flex-row lg:justify-between gap-8">
+          {/* My Pokémon */}
+          <div className="flex-1">
+            <PokeCard pokemon={myPokemon} pokemonId={myPokemon.id} />
+          </div>
+
+          {/* Battle Button */}
+          <div className="flex flex-col items-center gap-4">
+            <button
+              onClick={handleBattle}
+              className="btn btn-warning flex items-center gap-2 text-lg"
+            >
+              <Zap size={20} /> Battle!
+            </button>
+            {battleResult && (
+              <p className="text-center text-lg font-medium text-gray-700">
+                {battleResult}
+              </p>
+            )}
+            {awaitingUsername && (
+              <div className="mt-4">
+                <input
+                  type="text"
+                  placeholder="Enter your name"
+                  value={usernameInput}
+                  onChange={(e) => setUsernameInput(e.target.value)}
+                  className="input input-bordered w-full mb-2"
+                />
+                <button
+                  onClick={handleSubmitUsername}
+                  className="btn btn-success w-full"
                 >
-                  {t.type.name.toUpperCase()}
-                </span>
-              ))}
-            </div>
-            <ul>
-              {myPokemon.stats.map((stat) => (
-                <li key={stat.stat.name}>
-                  {stat.stat.name}: {stat.base_stat}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <h2>VS</h2>
-
-          {/* Random Enemy Pokemon */}
-          {enemyPokemon ? (
-            <div className="pokemon">
-              <h2>{enemyPokemon.name.toUpperCase()}</h2>
-              <img
-                src={enemyPokemon.sprites.front_default}
-                alt={enemyPokemon.name}
-              />
-              <div className="types">
-                <strong>Type{enemyPokemon.types.length > 1 ? "s" : ""}:</strong>{" "}
-                {enemyPokemon.types.map((t) => (
-                  <span
-                    key={t.type.name}
-                    className={`type-badge type-${t.type.name}`}
-                  >
-                    {t.type.name.toUpperCase()}
-                  </span>
-                ))}
+                  Submit Score
+                </button>
               </div>
-              <ul>
-                {enemyPokemon.stats.map((stat) => (
-                  <li key={stat.stat.name}>
-                    {stat.stat.name}: {stat.base_stat}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p>Loading enemy Pokémon...</p>
-          )}
-        </div>
-
-        <button onClick={handleBattle} className="battle-btn">
-          Battle!
-        </button>
-
-        {battleResult && <h3 className="result">{battleResult}</h3>}
-
-        {awaitingUsername && (
-          <div className="leaderboard-entry">
-            <input
-              type="text"
-              placeholder="Enter your name"
-              value={usernameInput}
-              onChange={(e) => setUsernameInput(e.target.value)}
-            />
-            <button onClick={handleSubmitUsername}>Submit Score</button>
+            )}
           </div>
-        )}
+
+          {/* Enemy Pokémon */}
+          <div className="flex-1">
+            {enemyPokemon ? (
+              <PokeCard pokemon={enemyPokemon} pokemonId={enemyPokemon.id} />
+            ) : (
+              <p className="text-center">Loading enemy Pokémon...</p>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );

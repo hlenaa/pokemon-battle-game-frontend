@@ -10,7 +10,12 @@ import {
   Gauge,
 } from "lucide-react";
 
-const PokeCard = ({ pokemon, pokemonId, roster, setRoster }) => {
+const PokeCard = ({
+  pokemon,
+  pokemonId,
+  roster = [],
+  setRoster = () => {},
+}) => {
   const isInRoster = roster.some((p) => p.id === pokemonId); // Check if the Pokémon is already in the roster
   const location = useLocation(); // Get the current route
   const isHomePage = location.pathname === "/"; // Check if the current route is the home page
@@ -54,6 +59,9 @@ const PokeCard = ({ pokemon, pokemonId, roster, setRoster }) => {
     unknown: "bg-gray-100",
   };
 
+  const bgColorClass =
+    typeColors[pokemon.types?.[0]?.type.name] || "bg-gray-100";
+
   const typeBadgeColors = {
     normal: "bg-gray-600",
     fighting: "bg-red-700",
@@ -78,12 +86,7 @@ const PokeCard = ({ pokemon, pokemonId, roster, setRoster }) => {
   };
 
   return (
-    <div
-      className="card shadow-sm"
-      style={{
-        backgroundColor: typeColors[pokemon.types?.[0]?.type.name] || "#f8f8f8",
-      }}
-    >
+    <div className={`card shadow-sm ${bgColorClass}`}>
       <figure>
         <img
           src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`}
