@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import PokeCard from "../components/PokeCard";
-import { Zap } from "lucide-react";
+import { Zap, RotateCcw } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function Battle() {
   const testRoster = [
@@ -34,6 +35,8 @@ function Battle() {
   const [battleResult, setBattleResult] = useState(null);
   const [awaitingUsername, setAwaitingUsername] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
+  const [scoreSubmitted, setScoreSubmitted] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getRandomPokemon = async () => {
@@ -128,22 +131,30 @@ function Battle() {
     }
   };
 
-  const handleSubmitUsername = () => {
+  const handleSubmitUsername = async () => {
     if (!usernameInput.trim() || !enemyPokemon) return;
 
-    const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
     const newEntry = {
-      id: leaderboard.length + 1,
-      username: usernameInput.trim(),
+      name: usernameInput.trim(),
       score: enemyPokemon.base_experience || 50,
-      date: new Date().toISOString(),
     };
-    leaderboard.push(newEntry);
-    localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+
+    try {
+      console.log("Submitting:", newEntry);
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users`, newEntry);
+
+      // Reset state
+      setUsernameInput("");
+      setAwaitingUsername(false);
+    } catch (error) {
+      console.error("Failed to submit score:", error);
+      // You can add UI feedback here if needed
+    }
 
     // Reset input state
     setUsernameInput("");
     setAwaitingUsername(false);
+    setScoreSubmitted(true);
   };
 
   return (
@@ -168,11 +179,35 @@ function Battle() {
               <Zap size={20} /> Battle!
             </button>
             {battleResult && (
-              <p className="text-center text-lg font-medium text-gray-700">
-                {battleResult}
+              <div className="text-center text-lg font-medium text-gray-700">
+                <p>{battleResult}</p>
+                {!awaitingUsername && (
+                  <div className="flex justify-center mt-4">
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="btn bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 shadow-sm flex items-center gap-2 px-4 py-2 rounded-lg transition-all"
+                    >
+                      <RotateCcw size={18} />
+                      Retry
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+            {scoreSubmitted && (
+              <p className="text-sm text-center text-gray-500 mt-2">
+                See your score on the{" "}
+                <a
+                  href="/leaderboard"
+                  className="text-blue-600 underline hover:text-blue-800"
+                >
+                  leaderboard
+                </a>
+                !
               </p>
             )}
-            {awaitingUsername && (
+
+            {awaitingUsername && !scoreSubmitted && (
               <div className="mt-4">
                 <input
                   type="text"
@@ -190,7 +225,6 @@ function Battle() {
               </div>
             )}
           </div>
-
           {/* Enemy Pokémon */}
           <div className="flex-1">
             {enemyPokemon ? (
