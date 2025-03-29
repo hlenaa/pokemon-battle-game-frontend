@@ -35,6 +35,38 @@ const useGetPokemons = () => {
     }
   };
 
+  /*
+	const fetchRoster = async ({roster}) => {
+		setStatus("loading"); //UX: Set loading state
+		
+		try {
+			for (id of roster) {
+				let response = await fetch(`${PokemonBaseUrl}${id}`);
+				if (!response.ok) {
+					throw new Error(
+						`Failed fetching pokemon. Error Status: ${response.status}`
+					);
+				}
+			}
+			let response = await fetch(`${PokemonBaseUrl}${query}`);
+
+			if (!response.ok) {
+				throw new Error(
+					`Failed fetching pokemon. Error Status: ${response.status}`
+				);
+			}
+			let data = await response.json();
+			console.log(data);
+			setPokemons(id ? data : data.results);
+			setStatus(""); //UX: Set loading state to empty & show data instead
+		} catch (error) {
+			console.log(error);
+			//UX: Set error state
+			setStatus("error");
+		}
+	};
+	*/
+
   return { fetchPokemons }; //return function to use in components
 };
 

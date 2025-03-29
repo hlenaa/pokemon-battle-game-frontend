@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const NavBar = () => {
 	return (
-		<div className="navbar bg-base-100 shadow-sm">
+		<div className="navbar bg-base-100 shadow-sm ">
 			<div className="navbar-start">
 				<div className="flex-none">
 					<ul className="menu menu-horizontal px-1">
@@ -10,17 +10,17 @@ const NavBar = () => {
 							<Link to="/">Home</Link>
 						</li>
 						<li>
-							<details>
+							<details className="z-10">
 								<summary>Compete</summary>
 								<ul className="bg-base-100 rounded-t-none p-2">
 									<li>
-										<Link to="/my-roster">My Roster</Link>
+										<Link to="my-roster">My Roster</Link>
 									</li>
 									<li>
-										<Link to="/battle">Start a Battle!</Link>
+										<Link to="battle">Start a Battle!</Link>
 									</li>
 									<li>
-										<Link to="/leaderboard">Leaderboard</Link>
+										<Link to="leaderboard">Leaderboard</Link>
 									</li>
 								</ul>
 							</details>
