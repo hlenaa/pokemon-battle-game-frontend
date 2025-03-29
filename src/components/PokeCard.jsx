@@ -1,7 +1,13 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 const PokeCard = ({ pokemon, pokemonId, roster, setRoster }) => {
-	const isInRoster = roster.includes(pokemonId); // Check if the Pokémon is already in the roster
+	const isInRoster = roster.some((p) => p.id === pokemonId); // Check if the Pokémon is already in the roster
+
+	useEffect(() => {
+		// Update localStorage whenever the roster changes
+		localStorage.setItem("roster", JSON.stringify(roster));
+	}, [roster]); // Runs every time the roster changes
 
 	return (
 		<div className="card bg-base-100 w-96 shadow-sm">
@@ -14,14 +20,14 @@ const PokeCard = ({ pokemon, pokemonId, roster, setRoster }) => {
 			<div className="card-body">
 				<h2 className="card-title">{pokemon.name}</h2>
 				<div className="card-actions justify-end">
-					<Link to={`pokemon/${pokemonId}`} className="btn btn-primary">
+					<Link to={`/pokemon/${pokemonId}`} className="btn btn-primary">
 						See Entry
 					</Link>
 					<button
 						className="btn btn-primary"
 						onClick={() => {
 							if (!isInRoster) {
-								setRoster([...items, pokemonId]);
+								setRoster([...roster, { id: pokemonId, name: pokemon.name }]); // Add the Pokémon to the roster
 							}
 						}}
 					>
