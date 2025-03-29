@@ -179,19 +179,22 @@ const PokeCard = ({
           </>
         )}
 
-        <div className="card-actions justify-end">
+        <div className="flex flex-wrap gap-2 justify-center">
           <Link to={`/pokemon/${pokemonId}`} className="btn btn-primary">
             See Entry
           </Link>
-          {isHomePage ? (
+
+          {isHomePage && (
             <button
               className="btn btn-primary"
               onClick={() => addPokemon(pokemonId, pokemon.name)}
             >
               {isInRoster ? "Caught ✅" : "Catch"}
             </button>
-          ) : isMyRosterPage ? (
-            <div className="flex gap-2">
+          )}
+
+          {isMyRosterPage && (
+            <>
               <button
                 className="btn btn-error"
                 onClick={() => removePokemon(pokemonId)}
@@ -204,8 +207,8 @@ const PokeCard = ({
               >
                 Battle
               </Link>
-            </div>
-          ) : null}
+            </>
+          )}
         </div>
       </div>
     </div>
