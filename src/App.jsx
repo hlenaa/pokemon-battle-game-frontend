@@ -18,10 +18,23 @@ function App() {
 		return JSON.parse(localStorage.getItem("roster")) || [];
 	}); //initital state is empty array or localStortage
 	const [status, setStatus] = useState("loading"); //initital state for fetching data -> for UX
+	const [userScore, setUserScore] = useState(0); //initital state for user score
+	const [leaderboard, setLeaderboard] = useState([]);
 
 	return (
 		<AppContext.Provider
-			value={{ pokemons, setPokemons, status, setStatus, roster, setRoster }}
+			value={{
+				pokemons,
+				setPokemons,
+				status,
+				setStatus,
+				roster,
+				setRoster,
+				leaderboard,
+				setLeaderboard,
+				userScore,
+				setUserScore,
+			}}
 		>
 			<BrowserRouter>
 				<Routes>
