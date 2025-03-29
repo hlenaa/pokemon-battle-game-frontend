@@ -13,10 +13,12 @@ const basepath = "/";
 export const AppContext = createContext();
 
 function App() {
-	const [pokemons, setPokemons] = useState([1, 2, 4, 5, 4, 5]); //initital state is empty array
+	const [pokemons, setPokemons] = useState([]); //initital state is empty array
+	const [roster, setRoster] = useState([]); //initital state is empty array
+	const [status, setStatus] = useState("loading"); //initital state for fetching data -> for UX
 
 	return (
-		<AppContext.Provider value={{ pokemons, setPokemons }}>
+		<AppContext.Provider value={{ pokemons, setPokemons, status, setStatus, roster, setRoster }}>
 			<BrowserRouter>
 				<Routes>
 					<Route path={basepath} element={<MainLayout />}>

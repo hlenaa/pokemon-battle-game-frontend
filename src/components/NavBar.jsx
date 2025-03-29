@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const NavBar = () => {
 	return (
 		<div className="navbar bg-base-100 shadow-sm">
@@ -5,20 +7,20 @@ const NavBar = () => {
 				<div className="flex-none">
 					<ul className="menu menu-horizontal px-1">
 						<li>
-							<a>Home</a>
+							<Link to="/">Home</Link>
 						</li>
 						<li>
 							<details>
 								<summary>Compete</summary>
 								<ul className="bg-base-100 rounded-t-none p-2">
 									<li>
-										<a>My Roster</a>
+										<Link to="/my-roster">My Roster</Link>
 									</li>
 									<li>
-										<a>Start a Battle!</a>
+										<Link to="/battle">Start a Battle!</Link>
 									</li>
 									<li>
-										<a>Leaderboard</a>
+										<Link to="/leaderboard">Leaderboard</Link>
 									</li>
 								</ul>
 							</details>
