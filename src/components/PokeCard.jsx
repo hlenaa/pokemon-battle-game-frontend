@@ -23,9 +23,10 @@ const PokeCard = ({
   const isBattlePage = location.pathname === "/battle"; // Check if the current route is the battle page
 
   useEffect(() => {
-    // Update localStorage whenever the roster changes
-    localStorage.setItem("roster", JSON.stringify(roster));
-  }, [roster]); // Runs every time the roster changes
+    if (typeof setRoster === "function") {
+      localStorage.setItem("roster", JSON.stringify(roster));
+    }
+  }, [roster]);
 
   const removePokemon = (pokemonId) => {
     const updatedRoster = roster.filter((pokemon) => pokemon.id !== pokemonId);
@@ -33,7 +34,15 @@ const PokeCard = ({
   };
 
   const addPokemon = (pokemonId, pokemonName) => {
-    setRoster([...roster, { id: pokemonId, name: pokemonName }]);
+    // Fetch full Pokémon data before adding to roster
+    fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setRoster([...roster, data]);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch full Pokémon data:", error);
+      });
   };
 
   const typeColors = {
@@ -117,7 +126,7 @@ const PokeCard = ({
                 <span>Attack</span>
                 <strong>
                   {
-                    pokemon.stats.find((s) => s.stat.name === "attack")
+                    pokemon.stats?.find((s) => s.stat.name === "attack")
                       ?.base_stat
                   }
                 </strong>
@@ -127,7 +136,7 @@ const PokeCard = ({
                 <span>Defense</span>
                 <strong>
                   {
-                    pokemon.stats.find((s) => s.stat.name === "defense")
+                    pokemon.stats?.find((s) => s.stat.name === "attack")
                       ?.base_stat
                   }
                 </strong>
@@ -136,7 +145,10 @@ const PokeCard = ({
                 <HeartPulse className="text-red-500" size={20} />
                 <span>HP</span>
                 <strong>
-                  {pokemon.stats.find((s) => s.stat.name === "hp")?.base_stat}
+                  {
+                    pokemon.stats?.find((s) => s.stat.name === "attack")
+                      ?.base_stat
+                  }
                 </strong>
               </div>
               <div className="stat-card">
@@ -144,7 +156,7 @@ const PokeCard = ({
                 <span>Sp. Atk</span>
                 <strong>
                   {
-                    pokemon.stats.find((s) => s.stat.name === "special-attack")
+                    pokemon.stats?.find((s) => s.stat.name === "attack")
                       ?.base_stat
                   }
                 </strong>
@@ -154,7 +166,7 @@ const PokeCard = ({
                 <span>Sp. Def</span>
                 <strong>
                   {
-                    pokemon.stats.find((s) => s.stat.name === "special-defense")
+                    pokemon.stats?.find((s) => s.stat.name === "attack")
                       ?.base_stat
                   }
                 </strong>
@@ -164,7 +176,7 @@ const PokeCard = ({
                 <span>Speed</span>
                 <strong>
                   {
-                    pokemon.stats.find((s) => s.stat.name === "speed")
+                    pokemon.stats?.find((s) => s.stat.name === "attack")
                       ?.base_stat
                   }
                 </strong>
@@ -185,12 +197,20 @@ const PokeCard = ({
               {isInRoster ? "Caught ✅" : "Catch"}
             </button>
           ) : isMyRosterPage ? (
-            <button
-              className="btn btn-primary"
-              onClick={() => removePokemon(pokemonId)}
-            >
-              Remove
-            </button>
+            <div className="flex gap-2">
+              <button
+                className="btn btn-error"
+                onClick={() => removePokemon(pokemonId)}
+              >
+                Remove
+              </button>
+              <Link
+                to={`/battle?pokemonId=${pokemon.id}`}
+                className="btn btn-accent"
+              >
+                Battle
+              </Link>
+            </div>
           ) : null}
         </div>
       </div>

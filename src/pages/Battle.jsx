@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import PokeCard from "../components/PokeCard";
 import { Zap, RotateCcw } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Battle() {
   const testRoster = [
@@ -30,7 +30,12 @@ function Battle() {
     },
   ];
 
-  const [myPokemon] = useState(testRoster[0]);
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const selectedId = parseInt(params.get("pokemonId"));
+
+  const [myPokemon, setMyPokemon] = useState(null);
+
   const [enemyPokemon, setEnemyPokemon] = useState(null);
   const [battleResult, setBattleResult] = useState(null);
   const [awaitingUsername, setAwaitingUsername] = useState(false);
@@ -39,8 +44,23 @@ function Battle() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!selectedId) return;
+
+    const roster = JSON.parse(localStorage.getItem("roster")) || [];
+    const selected = roster.find((p) => p.id === selectedId);
+
+    if (selected) {
+      setMyPokemon(selected);
+    } else {
+      console.warn("No Pokémon found with that ID in the roster.");
+    }
+  }, [selectedId, myPokemon === null]);
+
+  useEffect(() => {
+    if (enemyPokemon !== null) return;
+
     const getRandomPokemon = async () => {
-      const randomId = Math.floor(Math.random() * 151) + 1; // Gen 1 (1–151)
+      const randomId = Math.floor(Math.random() * 151) + 1;
       try {
         const response = await axios.get(
           `https://pokeapi.co/api/v2/pokemon/${randomId}`
@@ -52,7 +72,7 @@ function Battle() {
     };
 
     getRandomPokemon();
-  }, []);
+  }, [enemyPokemon]);
 
   const getTypeEffectiveness = async (attackerTypes, defenderTypes) => {
     try {
@@ -89,10 +109,18 @@ function Battle() {
   };
 
   const handleBattle = async () => {
-    if (!myPokemon || !enemyPokemon) return;
+    if (
+      !myPokemon ||
+      !myPokemon.types ||
+      !enemyPokemon ||
+      !enemyPokemon.types
+    ) {
+      console.warn("Missing Pokémon or type data for battle.");
+      return;
+    }
 
-    const myTypes = myPokemon.types.map((t) => t.type.name);
-    const enemyTypes = enemyPokemon.types.map((t) => t.type.name);
+    const myTypes = myPokemon?.types?.map((t) => t.type.name) || [];
+    const enemyTypes = enemyPokemon?.types?.map((t) => t.type.name) || [];
 
     const myStats = myPokemon.stats.reduce((acc, s) => acc + s.base_stat, 0);
     const enemyStats = enemyPokemon.stats.reduce(
@@ -167,7 +195,11 @@ function Battle() {
         <div className="flex flex-col items-center lg:flex-row lg:justify-between gap-8">
           {/* My Pokémon */}
           <div className="flex-1">
-            <PokeCard pokemon={myPokemon} pokemonId={myPokemon.id} />
+            {myPokemon ? (
+              <PokeCard pokemon={myPokemon} pokemonId={myPokemon.id} />
+            ) : (
+              <p className="text-center">Loading your Pokémon...</p>
+            )}
           </div>
 
           {/* Battle Button */}
@@ -184,7 +216,13 @@ function Battle() {
                 {!awaitingUsername && (
                   <div className="flex justify-center mt-4">
                     <button
-                      onClick={() => window.location.reload()}
+                      onClick={() => {
+                        setMyPokemon(null);
+                        setEnemyPokemon(null);
+                        setBattleResult(null);
+                        setAwaitingUsername(false);
+                        setScoreSubmitted(false);
+                      }}
                       className="btn bg-white border border-gray-300 hover:bg-gray-100 text-gray-800 shadow-sm flex items-center gap-2 px-4 py-2 rounded-lg transition-all"
                     >
                       <RotateCcw size={18} />
