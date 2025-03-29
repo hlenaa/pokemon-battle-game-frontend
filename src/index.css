@@ -1,2 +1,8 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Style Pokémon cards */
+.stat-card {
+    @apply flex items-center justify-between p-3 bg-white rounded-xl shadow-sm text-sm;
+}
+  
