@@ -1,16 +1,33 @@
-const PokeCard = ({ pokemon }) => {
+import { Link } from "react-router-dom";
+
+const PokeCard = ({ pokemon, pokemonId, roster, setRoster }) => {
+	const isInRoster = roster.includes(pokemonId); // Check if the Pokémon is already in the roster
+
 	return (
 		<div className="card bg-base-100 w-96 shadow-sm">
 			<figure>
 				<img
-					src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-					alt="Pokemon"
+					src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`}
+					alt={pokemon.name}
 				/>
 			</figure>
 			<div className="card-body">
-				<h2 className="card-title">PokemonName</h2>
+				<h2 className="card-title">{pokemon.name}</h2>
 				<div className="card-actions justify-end">
-					<button className="btn btn-primary">Buy Now</button>
+					<Link to={`pokemon/${pokemonId}`} className="btn btn-primary">
+						See Entry
+					</Link>
+					<button
+						className="btn btn-primary"
+						onClick={() => {
+							if (!isInRoster) {
+								setRoster([...items, pokemonId]);
+							}
+						}}
+					>
+						{" "}
+						{isInRoster ? "Caught ✅" : "Catch"}
+					</button>
 				</div>
 			</div>
 		</div>
